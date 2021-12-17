@@ -49,7 +49,7 @@ float pNoise(vec2 p, int res){
 
 vec3 disp(float x, float y ,float z) {
     float dist = distance(uMouse,vec2(x,y));
-    float cond = 1.-step(0.05,dist);
+    float cond = 1.-step(0.1,dist);
     float nx = cond *sin(pNoise(vec2(x*10.,y*10.),10))*1.;
     float ny = cond *sin(pNoise(vec2(y*10.,x*10.),10))*1.;
     float nz = cond *sin(pNoise(vec2(y*x*5.,x+y*5.),10))*1.;

@@ -6,6 +6,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import vertex from "./shaders/vertex.glsl";
 import vertexP from './shaders/points_vertex.glsl';
 import fragment from "./shaders/fragment.glsl";
+import fragmentPlane from "./shaders/fragmentPlane.glsl";
 
 
 /**
@@ -50,6 +51,20 @@ const material = new THREE.ShaderMaterial({
   depthTest:false,
   depthWrite: false
 });
+const materialInt = new THREE.ShaderMaterial({
+  uniforms: {
+    uTime: { value: 0.0 },
+    uResolution: {value : new THREE.Vector2(sizes.width,sizes.height)},
+    uMouse: {value: new THREE.Vector2(0,0)},
+  },
+  vertexShader: vertex,
+  fragmentShader: fragmentPlane,
+  // transparent: true,
+  side: THREE.DoubleSide,
+  transparent:true,
+  depthTest:false,
+  depthWrite: false
+});
 const materialSecond = new THREE.ShaderMaterial({
   uniforms: {
     uTime: { value: 0.0 },
@@ -62,10 +77,10 @@ const materialSecond = new THREE.ShaderMaterial({
   side: THREE.DoubleSide,
 });
 
-const geometry = new THREE.PlaneBufferGeometry(1,1,200,200)
+const geometry = new THREE.PlaneBufferGeometry(1,1,100,100)
 const geometryB = new THREE.BufferGeometry()
 
-let pointNumber = 40000;
+let pointNumber = 10000;
 let pos = new Float32Array(pointNumber*3);
 let uv  = new Float32Array(pointNumber*2);
 for (let i = 0; i < pointNumber; i++) {
@@ -86,10 +101,10 @@ for (let i = 0; i < pointNumber; i++) {
 }
 geometryB.setAttribute('position', new THREE.Float32BufferAttribute(pos,3));
 geometryB.setAttribute('uv', new THREE.Float32BufferAttribute(uv,2));
-
 // console.log(geometryB.attributes.position.array)
-const mesh = new THREE.Points(geometry,material)
-scene.add(mesh);
+const meshInt = new THREE.Mesh(geometry,materialInt)
+const points = new THREE.Points(geometry,material)
+scene.add(meshInt,points);
 
 // console.log(geometryB.attributes.uv.array)
 // console.log(geometryB.attributes.position.array)
@@ -100,26 +115,28 @@ scene.add(mesh);
  *   Raycast Func 
  * */
 
-// const mouse = new THREE.Vector2();
+const mouse = new THREE.Vector2();
+const emouse = new THREE.Vector2();
+function raycast(objects){
 
-// function raycast(objects){
+  const raycaster = new THREE.Raycaster();
 
-//   const raycaster = new THREE.Raycaster();
-
-//   window.addEventListener("mousemove", onMouseMove);
-//   function onMouseMove(event) {
-//     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-//     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  window.addEventListener("mousemove", onMouseMove);
+  function onMouseMove(event) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
 
-//     raycaster.setFromCamera(mouse, camera);
-//     const intersects = raycaster.intersectObjects([]);
-//     if (intersects.length > 0) {
-    
-//       // console.log(intersects)
-//     }
-//   }
-// };
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects([meshInt]);
+    if (intersects.length > 0) {
+      let p = intersects[0].point
+      emouse.x = p.x 
+      emouse.y = p.y
+    }
+  }
+};
+raycast()
 
 
 
@@ -135,30 +152,30 @@ window.addEventListener("resize", () => {
 });
 
 
-// Mouse event 
-const mouse = {
-  x:0,
-  y:0,
-  prevX:0,
-  prevY:0,
-  vx: 0 ,
-  vy: 0 ,
-}
+// // Mouse event 
+// const mouse = {
+//   x:0,
+//   y:0,
+//   prevX:0,
+//   prevY:0,
+//   vx: 0 ,
+//   vy: 0 ,
+// }
 
-window.addEventListener("mousemove", (e) => {
-  mouse.x = (e.clientX / window.innerWidth) -0.5;
-  mouse.y = 0.5-(e.clientY / window.innerHeight);
+// window.addEventListener("mousemove", (e) => {
+//   mouse.x = (e.clientX / window.innerWidth) -0.5;
+//   mouse.y = 0.5-(e.clientY / window.innerHeight);
 
-  // console.log(mouse.x,mouse.y)
+//   // console.log(mouse.x,mouse.y)
 
-  mouse.vx = mouse.x - mouse.prevX;
-  mouse.vy = mouse.y - mouse.prevY;
+//   mouse.vx = mouse.x - mouse.prevX;
+//   mouse.vy = mouse.y - mouse.prevY;
 
-  mouse.prevX = mouse.x;
-  mouse.prevY = mouse.y;
+//   mouse.prevX = mouse.x;
+//   mouse.prevY = mouse.y;
 
 
-});
+// });
 
 
 
@@ -168,8 +185,8 @@ window.addEventListener("mousemove", (e) => {
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height,0.0001,1000);
 // gsap.fromTo(camera.position,{z:-1},{duration:10,z:1})
 // gsap.to(camera.position,{z:-1,delay:10})
-camera.position.z = 0.1
-camera.position.y = -0.5
+camera.position.z = 1
+// camera.position.y = -0.5
 scene.add(camera);
 
 /**
@@ -203,7 +220,7 @@ const animate = () => {
 
   // Mouse
 
-    material.uniforms.uMouse.value.set(mouse.x,mouse.y)
+    material.uniforms.uMouse.value.set(emouse.x,emouse.y)
     material.uniforms.uTime.value = elapseTime
 
   // datatexture
