@@ -46,6 +46,9 @@ const material = new THREE.ShaderMaterial({
   fragmentShader: fragment,
   // transparent: true,
   side: THREE.DoubleSide,
+  transparent:true,
+  depthTest:false,
+  depthWrite: false
 });
 const materialSecond = new THREE.ShaderMaterial({
   uniforms: {
@@ -184,7 +187,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
-renderer.setClearColor(new THREE.Color("rgb(0,0,20)"));
+renderer.setClearColor(new THREE.Color("rgb(0,0,0)"));
 // renderer.autoClear = false;
 
 /**

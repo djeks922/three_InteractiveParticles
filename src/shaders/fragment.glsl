@@ -9,10 +9,14 @@ varying vec3 vposition;
 // varying vec3 vNormal;
 
 void main () {
-    float dist = distance(gl_PointCoord,vec2(0.5));
-    float p = 1.-smoothstep(0.5,0.52,dist);
-    vec2 newUv = vec2(1.,0.) * p;
-    gl_FragColor = vec4(newUv,0.0,1.0);
+
+
+    float border = 0.7;
+	float radius = 0.5;
+	float dist = radius - distance(gl_PointCoord, vec2(0.5));
+	float t = smoothstep(0.0, border, dist);
+
+    gl_FragColor = vec4(1.0,.3,1.0,t);
     // gl_FragColor  = texture2D(uTexture,vUv);
 
 }
