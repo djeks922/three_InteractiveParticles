@@ -79,7 +79,7 @@ const materialSecond = new THREE.ShaderMaterial({
 const geometry = new THREE.PlaneBufferGeometry(2, 2, 50, 50);
 const geometryB = new THREE.BufferGeometry();
 
-let pointNumber = 1000;
+let pointNumber = 7000;
 let pos = new Float32Array(pointNumber * 3);
 let uv = new Float32Array(pointNumber * 2);
 for (let i = 0; i < pointNumber; i++) {
@@ -100,7 +100,7 @@ geometryB.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
 geometryB.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
 
 const meshInt = new THREE.Mesh(geometry, materialInt);
-const points = new THREE.Points(geometry, material);
+const points = new THREE.Points(geometryB, material);
 
 scene.add(meshInt, points);
 

@@ -46,7 +46,7 @@ float pNoise(vec2 p, int res){
 
 vec4 disp(float x, float y ,float z) {
     float dist = distance(uMouse,vec2(x,y));
-    float cond = 1.-(smoothstep(0.0,0.5,dist));
+    float cond = 1.-(smoothstep(0.0,0.1,dist)*smoothstep(0.1,0.3,dist));
     float nx = cond *pNoise(vec2(x+10.,y+10.),50)*1.;
     float ny = cond *pNoise(vec2(y+10.,x+10.),50)*1.;
     float nz = cond *pNoise(vec2(y*(x+5.),x+y+5.),50)*1.;
@@ -62,9 +62,13 @@ void main(){
     vec4 d = disp(modelPosition.x,modelPosition.y,modelPosition.z);
     
     //displacement
-    modelPosition.x += d.a*(cos(d.x*50. + uTime)*0.1);
-    modelPosition.y += d.a*(sin(d.y*50. + uTime)*0.1);
+    modelPosition.x += d.a*(cos(d.y*50. + uTime)*0.1);
+    modelPosition.y += d.a*(sin(d.z*50. + uTime)*0.1);
     modelPosition.z = d.a*sin(d.z);
+
+	// modelPosition.x += d.a*(mod(cos(d.y*50. + uTime),0.01));
+    // modelPosition.y += d.a*(mod(sin(d.z*50. + uTime),0.01));
+    // modelPosition.z = d.a*sin(d.z);
 
 
 
