@@ -2,11 +2,8 @@ uniform float uTime;
 uniform vec2 uResolution;
 uniform vec2 uMouse;
 
-attribute vec3 displacement;
-
 varying vec2 vUv;
 varying vec3 vposition;
-
 
 #define PI 3.14159265358979323846
 float rand(vec2 c){
@@ -47,13 +44,13 @@ float pNoise(vec2 p, int res){
 	return nf*nf*nf*nf;
 }
 
-vec3 disp(float x, float y ,float z) {
+vec4 disp(float x, float y ,float z) {
     float dist = distance(uMouse,vec2(x,y));
-    float cond = 1.-step(0.1,dist);
-    float nx = cond *sin(pNoise(vec2(x*10.,y*10.),10))*1.;
-    float ny = cond *sin(pNoise(vec2(y*10.,x*10.),10))*1.;
-    float nz = cond *sin(pNoise(vec2(y*x*5.,x+y*5.),10))*1.;
-    return vec3(nx,ny,nz);
+    float cond = 1.-(smoothstep(0.0,0.5,dist));
+    float nx = cond *pNoise(vec2(x+10.,y+10.),50)*1.;
+    float ny = cond *pNoise(vec2(y+10.,x+10.),50)*1.;
+    float nz = cond *pNoise(vec2(y*(x+5.),x+y+5.),50)*1.;
+    return vec4(nx,ny,nz,cond);
 }
 
 void main(){
@@ -62,12 +59,12 @@ void main(){
 
 
     vec4 modelPosition = modelMatrix * vec4(position,1.0);
-    vec3 d = disp(modelPosition.x,modelPosition.y,modelPosition.z);
+    vec4 d = disp(modelPosition.x,modelPosition.y,modelPosition.z);
     
     //displacement
-    modelPosition.x += sin(d.x*uTime*20.)*0.01 +d.x;
-    modelPosition.y += sin(d.y*uTime*20.)*0.01 +d.y;
-    modelPosition.z += sin(d.z*uTime*20.)*0.01 +d.z;
+    modelPosition.x += d.a*(cos(d.x*50. + uTime)*0.1);
+    modelPosition.y += d.a*(sin(d.y*50. + uTime)*0.1);
+    modelPosition.z = d.a*sin(d.z);
 
 
 
@@ -78,6 +75,6 @@ void main(){
     
     gl_Position = projectionPosition;
 
-    gl_PointSize = 1.0 * (1.0 / - viewPosition.z);
+    gl_PointSize = 5.0 * (1.0 / - viewPosition.z);
     
 }
