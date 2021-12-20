@@ -62,8 +62,8 @@ void main(){
     vec4 d = disp(modelPosition.x,modelPosition.y,modelPosition.z);
     
     //displacement
-    modelPosition.x += d.a*(cos(d.y*50. + uTime)*0.1);
-    modelPosition.y += d.a*(sin(d.z*50. + uTime)*0.1);
+    modelPosition.x += d.a*(sign(d.y)*cos(d.x*50. + uTime)*0.1);
+    modelPosition.y += d.a*(sign(d.z)*sin(d.y*50. + uTime)*0.1);
     modelPosition.z = d.a*sin(d.z);
 
 	// modelPosition.x += d.a*(mod(cos(d.y*50. + uTime),0.01));

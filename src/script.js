@@ -76,10 +76,10 @@ const materialSecond = new THREE.ShaderMaterial({
   side: THREE.DoubleSide,
 });
 
-const geometry = new THREE.PlaneBufferGeometry(2, 2, 50, 50);
+const geometry = new THREE.PlaneBufferGeometry(3, 3, 1, 1);
 const geometryB = new THREE.BufferGeometry();
 
-let pointNumber = 7000;
+let pointNumber = 20000;
 let pos = new Float32Array(pointNumber * 3);
 let uv = new Float32Array(pointNumber * 2);
 for (let i = 0; i < pointNumber; i++) {
@@ -89,8 +89,8 @@ for (let i = 0; i < pointNumber; i++) {
   const y = Math.random();
   const z = (Math.random() - 0.5) * 0;
 
-  pos[i3] = x - 0.5;
-  pos[i3 + 1] = y - 0.5;
+  pos[i3] = x*2 - 1;
+  pos[i3 + 1] = y*2 - 1;
   pos[i3 + 2] = z;
 
   uv[i2] = x;
